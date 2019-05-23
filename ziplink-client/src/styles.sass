@@ -1,0 +1,172 @@
+//styles
+$blue-light: hsl(206, 75%, 60%)
+$blue: hsl(206, 75%, 46%)
+$blue-dark: hsl(206, 75%, 30%)
+$g: hsl(0, 0%, 72%)
+$dark: rgb(51, 51, 57)
+$darker: rgb(39, 39, 43)
+
+@import "../node_modules/bulma/bulma.sass"
+//@import "../node_modules/animate.css/animate.min.css"
+@import url("//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,900")
+@import url("//use.fontawesome.com/releases/v5.7.2/css/all.css")
+
+
+.screen
+	background-image: linear-gradient(to bottom right, $blue, $blue-dark)
+	min-height: 100vh
+	display: flex
+	align-items: center
+	justify-content: center
+.content
+	display: block
+	min-width: 300px
+	max-width: 600px
+	margin-bottom: 20%
+	color: $grey-lighter
+	.title
+		color: $warning
+		font-family: 'Source Sans Pro'
+		font-weight: 900
+
+.options
+	border-radius: 5px
+
+	padding: 10px
+	.option-label
+		color: $grey-lighter
+		font-weight: 600
+		font-size: 14px
+	.option-input
+		box-shadow: inset 0 0 4px black
+		border: none
+		border-radius: 5px
+		padding: 8px
+		margin: 0
+		display: block
+		font-size: 16px
+		margin-bottom: 10px
+		background-color: $blue-light
+		color: $white-ter
+		width: 100%
+	.option-input::placeholder
+		color: $grey-lighter
+.loading
+	text-align: center
+.results
+	.copywell
+		resize: none
+		box-shadow: inset 0 0 4px black
+		border: none
+		border-radius: 5px
+		padding: 10px
+		background-color: $blue-light
+		color: $white-ter
+		font-size: 16px
+		width: 100%
+		min-height: 100px
+.progContainer
+	position: relative
+	margin: 5px
+.prog
+	border-radius: 5px
+	position: static
+	background-color: $blue-light
+	opacity: 80%
+	height: 1.8em
+	transition: width .5s ease
+.proglabel
+	color: $grey-lighter
+	padding: 2px 5px
+	position: absolute
+.hidden
+	display: none
+
+.centered
+	text-align: center
+.small
+	font-size: 12px
+.refresh
+	display: block
+	text-align: center
+	padding: 5px 10px
+	font-size: 16px
+	color: $grey-darker
+	font-weight: 500
+	border-radius: 5px
+	margin: 30px auto
+	box-shadow: 2px 2px 2px 1px hsla(0, 0, 0, 0.6)
+	background-color: $warning
+	border: none
+.fileDrop
+	display: block
+	margin-bottom: 10px
+	min-width: 100px
+	min-height: 100px
+	padding: 5px
+	width: 100%
+	vertical-align: middle
+	border: $grey-lighter 4px dashed
+	border-radius: 10px
+	color: $grey-lighter
+	.empty
+		text-align: center
+		padding-top: 30px
+		min-height: 100px
+.dragover
+	border: $blue-light 4px dashed
+.error
+	border: $danger 4px dashed
+.hidden
+	display: none
+.fa-loading
+	animation: spin 1.5s infinite linear
+.table
+	margin-bottom: 5px !important
+.upload-btn
+	margin: 10px
+@keyframes spin
+	from
+		transform: rotate(0deg)
+	to
+		transform: rotate(360deg)
+.fa-pulse
+	display: inline-block
+	animation: pulse 0.8s infinite linear
+
+@keyframes pulse
+	0%
+		transform: scale(1)
+	50%
+		transform: scale(1.2)
+	100%
+		transform: scale(1)
+
+.lds-ring
+  display: inline-block
+  position: relative
+  width: 64px
+  height: 64px
+.lds-ring div
+  box-sizing: border-box
+  display: block
+  position: absolute
+  width: 51px
+  height: 51px
+  margin: 6px
+  border: 6px solid #fff
+  border-radius: 50%
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite
+  border-color: #fff transparent transparent transparent
+.lds-ring div:nth-child(1)
+  animation-delay: -0.45s
+.lds-ring div:nth-child(2)
+  animation-delay: -0.3s
+.lds-ring div:nth-child(3)
+  animation-delay: -0.15s
+
+@keyframes lds-ring
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)

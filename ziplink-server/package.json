@@ -1,0 +1,30 @@
+{
+  "name": "ziplink-server",
+  "version": "1.0.0",
+  "description": "This is an automated PDF ocr project",
+  "main": "ziplink-server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-css": "node-sass styles.sass   public/css/main.css",
+    "watch-css": "nodemon -e sass -x \"npm run build-css\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iethree/ziplink.git"
+  },
+  "author": "RL",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iethree/ziplink/issues"
+  },
+  "homepage": "https://github.com/iethree/ziplink#readme",
+  "dependencies": {
+    "box-node-sdk": "^1.29.0",
+    "chalk": "^2.4.2",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.1",
+    "pm2": "^3.4.0"
+  }
+}

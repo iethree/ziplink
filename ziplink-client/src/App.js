@@ -6,7 +6,7 @@ function App(props) {
   const [loading, setLoading] = useState(false);
   const [expires, setExpires] = useState(14);
   const [serverData, setServerData] = useState(null);
-
+  document.title = "ZipLink";
 
   return (
     <div className="screen">
@@ -19,16 +19,15 @@ function App(props) {
             <Uploader name={name} expires = {expires} returnValues={setServerData} setLoading={setLoading}/>
             <Options  setName = {setName} setExpires={setExpires}/>
           </React.Fragment> :
-          <Loading  />
+          null
         }
+
+        {loading && !serverData ? <Loading  /> : null}
 
         { serverData ?
           <Results  link={serverData.link} password={serverData.password} expires={expires} /> :
           null
         }
-
-
-
       </div>
     </div>
   );
@@ -51,7 +50,7 @@ function Options(props){
 function Loading(props){
   return(
     <div className="loading">
-      <div> Uploading and Zipping </div>
+      <div> Zipping and Uploading </div>
       <div className="lds-ring">
         <div /> <div /> <div /> <div />
       </div>

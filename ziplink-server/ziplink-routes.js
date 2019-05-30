@@ -52,13 +52,10 @@ router.post('/uploadDocs', upload.array('file',99), async function(req, res, nex
     var result = await uploadZip(zipName, expires).catch(printerr);
   else
     var result = {error: 'zip error'};
-  //send link and password back to client
+
+	//send link and password (or error) back to client
   res.send(result).status(200);
-  //handle zip upload already
 
-
-
-  //send to box
 
 });
 

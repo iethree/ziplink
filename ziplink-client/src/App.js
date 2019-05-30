@@ -1,9 +1,10 @@
 import React, { useState, useEffect} from 'react';
+import {CSSTransition} from 'react-transition-group';
 import './styles.sass';
 
 function App(props) {
   const [name, setName] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(0);
   const [expires, setExpires] = useState(14);
   const [serverData, setServerData] = useState(null);
   document.title = "ZipLink";
@@ -14,19 +15,24 @@ function App(props) {
 
         <h1 className="title is-1 has-text-centered">Zip <i className="fas fa-file-archive" /> link</h1>
 
-        {!loading ?
-          <React.Fragment>
-            <Uploader name={name} expires = {expires} returnValues={setServerData} setLoading={setLoading}/>
-            <Options  setName = {setName} setExpires={setExpires}/>
-          </React.Fragment> :
-          null
+        {loading===0 ?
+          <Options  setName = {setName} setExpires={setExpires}/>
+          : null
+        }
+        {loading<2 ?
+          <Uploader name={name} expires = {expires} returnValues={setServerData} setLoading={setLoading}/>
+          : null
+        }
+        {loading===2 && !serverData ? <Loading  /> : null}
+
+        { serverData && serverData.error
+            ? <Error error = {serverData.error} />
+            : null
         }
 
-        {loading && !serverData ? <Loading  /> : null}
-
-        { serverData ?
-          <Results  link={serverData.link} password={serverData.password} expires={expires} /> :
-          null
+        { serverData && !serverData.error
+            ? <Results  link={serverData.link} password={serverData.password} expires={expires} />
+            : null
         }
       </div>
     </div>
@@ -35,7 +41,7 @@ function App(props) {
 
 function Options(props){
   return(
-    <div className="options">
+    <div className="options" id="options">
       <form>
         <label className="option-label"> Link Expiration </label>
         <input className="option-input" type="number" name="expires" placeholder = "14" min="1" max="90"
@@ -49,7 +55,7 @@ function Options(props){
 }
 function Loading(props){
   return(
-    <div className="loading">
+    <div className="loading" id="loading">
       <div> Zipping and Uploading </div>
       <div className="lds-ring">
         <div /> <div /> <div /> <div />
@@ -65,7 +71,7 @@ function Results(props){
     setCopied(true);
   }
   return(
-    <div className="results">
+    <div className="results" id="results">
       <div id="copywell" className = "copywell" onClick={copyContent}>
         download link: {props.link} <br/>
         password: {props.password} <br/>
@@ -73,13 +79,26 @@ function Results(props){
       </div>
       <div className='centered small'>
       {copied ? 'copied' : 'click above to copy'}
-      <button className="refresh" onClick={()=>document.location.reload()} > New ZipLink </button>
-      </div>
+      <RefreshButton />
 
+      </div>
     </div>
   );
 }
 
+function RefreshButton(props){
+  return <button className="refresh" onClick={()=>document.location.reload()} > New ZipLink </button> ;
+}
+
+
+function Error(props){
+  return(
+    <div className="has-text-centered" id="results">
+      <i className="far fa-frown" /> {props.error}
+      <RefreshButton />
+    </div>
+  );
+}
 
 function Uploader(props){
   var [dragover, setDragover]=useState(true);
@@ -142,10 +161,12 @@ function Uploader(props){
       url = '/uploadDocs';
 
     xhr.open(method, url, true);
+    props.setLoading(1);
     xhr.upload.onprogress = function (p) {
       let prog = Math.floor(p.loaded/p.total*100);
-      if(prog>99)
-        props.setLoading(true);
+      if(prog>99){
+        props.setLoading(2);
+      }
       else{
         let printProg= prog+"%";
         setProgress(printProg);
@@ -155,6 +176,7 @@ function Uploader(props){
     xhr.onload= function(e){
       var response = JSON.parse(e.target.response);
       //get link and password from server
+      props.setLoading(3);
       props.returnValues(response);
     }
 
@@ -179,7 +201,7 @@ function Uploader(props){
   }
 
     return(
-      <div className={"fileDrop "+dragover} onDragOver={onHover} onDrop={onDrop} onDragLeave={onNotHover} >
+      <div id="fileDrop" className={"fileDrop "+dragover} onDragOver={onHover} onDrop={onDrop} onDragLeave={onNotHover} >
         <input id="fileInput" type="file" multiple="multiple" className="hidden" onChange={onInputFile}/>
         <Uploads inProgress={loadingDocs} fileInputClick={fileInputClick} progress={progress}/>
       </div>
@@ -235,13 +257,16 @@ function Icon(props){
   }
 }
 
+
 function animate(element, animationName, callback) {
     const node = document.querySelector(element);
     if(!node)
       return;
     node.classList.add('animated', animationName)
 
+
     function handleAnimationEnd() {
+
         node.classList.remove('animated', animationName)
         node.removeEventListener('animationend', handleAnimationEnd)
 

@@ -107,7 +107,7 @@ function uploadZip(zipName, expires){
     client.files.uploadFile(folderID, fileName, stream)
     .then(file => {
       console.log(chalk.green('updating: '+zipName));
-      client.files.update(file.id, {
+      client.files.update(file.entries[0].id, {
           shared_link:{
             access:"open",
             password: password,
@@ -122,17 +122,23 @@ function uploadZip(zipName, expires){
           shell.rm(zipFile);
 
           resolve({
-            link: updatedFile.shared_link.download_url,
+            error: null,
+						link: updatedFile.shared_link.download_url,
             password: password,
             expires: expires
           });
-      }).catch(printerr);
-    });
+      }).catch((err)=>sendErr("Box Sharing Error", err, resolve));
+    }).catch((err)=>sendErr("Box Upload Error", err, resolve));
   });
 }
 
 function printerr(err){
   console.log(chalk.magenta(err));
+}
+
+function sendErr(type, err, resolve){
+	printerr(err);
+	resolve({error: type});
 }
 
 module.exports = router;

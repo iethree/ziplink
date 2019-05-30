@@ -7,7 +7,7 @@ $dark: rgb(51, 51, 57)
 $darker: rgb(39, 39, 43)
 
 @import "../node_modules/bulma/bulma.sass"
-//@import "../node_modules/animate.css/animate.min.css"
+@import "../node_modules/animate.css/animate.min.css"
 @import url("//fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,900")
 @import url("//use.fontawesome.com/releases/v5.7.2/css/all.css")
 
@@ -31,8 +31,10 @@ $darker: rgb(39, 39, 43)
 
 .options
 	border-radius: 5px
-
 	padding: 10px
+	max-height: 300px
+	transition: opacity 1s ease
+
 	.option-label
 		color: $grey-lighter
 		font-weight: 600
@@ -54,6 +56,7 @@ $darker: rgb(39, 39, 43)
 .loading
 	text-align: center
 .results
+	transition: opacity 1s ease
 	.copywell
 		resize: none
 		box-shadow: inset 0 0 4px black
@@ -141,7 +144,8 @@ $darker: rgb(39, 39, 43)
 		transform: scale(1.2)
 	100%
 		transform: scale(1)
-
+.loading
+	transition: opacity 1s ease
 .lds-ring
   display: inline-block
   position: relative

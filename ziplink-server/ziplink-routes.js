@@ -10,18 +10,8 @@ const BoxSDK = require('box-node-sdk');
 //Box Credentials
 var config =JSON.parse(fs.readFileSync('.env'));
 const sdk = BoxSDK.getPreconfiguredInstance(config);
-//const client = sdk.getAppAuthClient('enterprise', config.enterpriseID);
-const client = sdk.getAppAuthClient('user', config.userID);
-
-// const sdk = new BoxSDK({
-//   clientID: config.boxAppSettings.clientID,
-//   clientSecret: config.boxAppSettings.clientSecret
-// });
-//const client = sdk.getBasicClient('6EQrIwtEm8JzWyLoYC5kOSmiudOxYV2A');
-
-// client.folders.create('0', 'Ziplink files').then((folder)=>{
-//   folderID=folder.id;
-// });
+//const client = sdk.getAppAuthClient('enterprise');
+const client = sdk.getBasicClient('cVkjdIfREOS5rMP9U6I3N5lLEMaZimL8');
 
 const tempPath ='docTemp/';
 const savePath ='uploads/';
@@ -45,9 +35,15 @@ router.post('/uploadDocs', upload.array('file',99), async function(req, res, nex
     }
   }
 
-  var zipName = req.body.name ? savePath+req.body.name+".zip" : savePath+"zip_"+Date.now()+".zip";
+  var zipName = req.body.name ? savePath+req.body.name : savePath+"zip_"+Date.now();
+	zipName = zipName.replace(/.zip/ig,'')+'.zip';
 
-  var zipped = await zipFiles(zipName, fileList).catch(printerr);
+	if(fileList.length===1 && fileList[0].toLowerCase().includes('.zip')){
+		fs.renameSync(fileList[0].substring(1, fileList[0].length-1), zipName);
+		var zipped=true;
+	}
+	else
+  	var zipped = await zipFiles(zipName, fileList).catch(printerr);
 
   var expireDays = req.body.expires || 14;
   var expires = datefns.addDays(new Date(), expireDays);
@@ -55,12 +51,12 @@ router.post('/uploadDocs', upload.array('file',99), async function(req, res, nex
   if(zipped)
     var result = await uploadZip(zipName, expires).catch(printerr);
   else
-    var result = false;
+    var result = {error: 'zip error'};
   //send link and password back to client
   res.send(result).status(200);
   //handle zip upload already
 
-    /* WIP */
+
 
   //send to box
 
@@ -69,12 +65,11 @@ router.post('/uploadDocs', upload.array('file',99), async function(req, res, nex
 function zipFiles(zipName, fileList){
   return new Promise((resolve, reject)=>{
     let cmd=`zip -m ${zipName} ${fileList.join(' ')} `;
-    console.log(cmd);
 
     shell.exec(`zip -m ${zipName} ${fileList.join(' ')} `, {silent: false}, (code, stdout, stderr)=>{
 
       if(code===0){
-        console.log(chalk.green('zipped ', zipName));
+        console.log(chalk.green('zipped ', fileList.length, ' files ', zipName));
         resolve(true);
       }
       else{
@@ -119,7 +114,7 @@ function uploadZip(zipName, expires){
       }).then(updatedFile=>{
           console.log(chalk.green('completing: '+zipName));
           console.log(chalk.green('file ready: '+updatedFile.name));
-          shell.rm(zipFile);
+          shell.rm(zipName);
 
           resolve({
             error: null,

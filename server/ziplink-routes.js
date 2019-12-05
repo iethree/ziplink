@@ -10,8 +10,8 @@ const BoxSDK = require('box-node-sdk');
 //Box Credentials
 var config =JSON.parse(fs.readFileSync('.env'));
 const sdk = BoxSDK.getPreconfiguredInstance(config);
-//const client = sdk.getAppAuthClient('enterprise');
-const client = sdk.getBasicClient('cVkjdIfREOS5rMP9U6I3N5lLEMaZimL8');
+const client = sdk.getAppAuthClient('enterprise');
+//const client = sdk.getBasicClient('cVkjdIfREOS5rMP9U6I3N5lLEMaZimL8');
 
 const tempPath ='docTemp/';
 const savePath ='uploads/';
@@ -93,9 +93,10 @@ function uploadZip(zipName, expires){
     var password = crypto.randomBytes(12).toString('base64');
     var stream = fs.createReadStream(zipName);
 
-    var folderID = '77412689480';
+    var folderID = '0';//'95482764549'; 
     var fileName = zipName.replace(savePath, '');
-    console.log(chalk.green('uploading: '+zipName));
+    console.log(chalk.green('uploading: '+fileName));   
+
     client.files.uploadFile(folderID, fileName, stream)
     .then(file => {
       console.log(chalk.green('updating: '+zipName));
@@ -120,7 +121,8 @@ function uploadZip(zipName, expires){
             expires: expires
           });
       }).catch((err)=>sendErr("Box Sharing Error", err, resolve));
-    }).catch((err)=>sendErr("Box Upload Error", err, resolve));
+    })
+    .catch((err)=>sendErr("Box Upload Error", err, resolve));
   });
 }
 
@@ -131,6 +133,10 @@ function printerr(err){
 function sendErr(type, err, resolve){
 	printerr(err);
 	resolve({error: type});
+}
+
+function createFolder(){
+
 }
 
 module.exports = router;
